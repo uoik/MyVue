@@ -1,4 +1,5 @@
 import { constructProxy } from './proxy.js';
+import mount, { initMount } from './mount.js';
 
 let uid = 0; // 每个实例的唯一ID
 
@@ -15,8 +16,16 @@ function initMixin(Due) {
         if(options && options.data){
             vm._data = constructProxy(vm, options.data, '');
         }
-        
+
+        // 初始化el并挂载
+        if(options && options.el){
+            const rootDom = document.getElementById(options.el);
+            mount(vm, rootDom);
+        }
     }
+
+    // 给实例添加$mount挂载属性
+    initMount(Due);
 }
 
 export {
