@@ -1,4 +1,4 @@
-import { constructProxy } from './proxy.js';
+import constructProxy from './proxy.js';
 import mount, { initMount } from './mount.js';
 
 let uid = 0; // 每个实例的唯一ID

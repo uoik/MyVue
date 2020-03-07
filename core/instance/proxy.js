@@ -7,7 +7,12 @@
 function constructProxy(vm, data, namespace) {
     let proxyObj = null;
     if (data instanceof Array) {
-
+        // 判断数组内的每一项是否为对象或数组
+        for(let i = 0; i < data.length; i ++){
+            constructProxy(vm, data[i], namespace);
+        }
+        // 代理数组
+        proxyObj = proxyArr(vm, data, namespace);
     } else if (data instanceof Object) {
         // 构建代理对象
         proxyObj = constructObjProxy(vm, data, namespace);
@@ -15,6 +20,55 @@ function constructProxy(vm, data, namespace) {
         throw new Error('Data is not Object or Array');
     }
     return proxyObj;
+}
+
+/**
+ * 代理数组
+ * @param {*} vm 实例
+ * @param {*} arr 数据数组
+ * @param {*} namespace 命名空间
+ */
+function proxyArr(vm, arr, namespace){
+    let obj = {
+        elmType: 'Array',
+        toString(){
+            let str = '';
+            for (let i = 0; i < arr.length; i++) {
+                str += arr[i] + ', ';
+            }
+            return str.substring(0, str.length - 2);
+        },
+        push() {},
+        pop() {},
+        shift() {},
+        unshift() {}
+    }
+    defArrayFunc.call(vm, obj, 'push', namespace, vm);
+
+    arr.__proto__ = obj;
+    return arr;
+}
+
+// 数组原型
+const arrayProto = Array.prototype;
+/**
+ * 重构数组方法
+ * @param {*} obj 重构后的对象
+ * @param {*} type 方法类型
+ * @param {*} namespace 命名空间
+ * @param {*} vm 实例
+ */
+function defArrayFunc(obj, type, namespace, vm) {
+    Object.defineProperty(obj, type, {
+        enumerable: true,
+        configurable: true,
+        value(...args){
+            let typeFunc = arrayProto[type];
+            let resp = typeFunc.apply(this, args);
+            console.log(namespace);
+            return resp;
+        }
+    })
 }
 
 /**
@@ -68,6 +122,4 @@ function getNameSpace(nowNameSpace, nowKey) {
     }
 }
 
-export {
-    constructProxy
-}
+export default constructProxy
