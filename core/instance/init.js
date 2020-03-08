@@ -23,9 +23,6 @@ function initMixin(Due) {
             mount(vm, rootDom);
         }
     }
-
-    // 给实例添加$mount挂载属性
-    initMount(Due);
 }
 
 export {

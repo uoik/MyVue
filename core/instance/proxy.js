@@ -1,3 +1,5 @@
+import { renderData } from './render.js';
+
 /**
  * 构建代理
  * @param {*} vm 实例
@@ -8,7 +10,7 @@ function constructProxy(vm, data, namespace) {
     let proxyObj = null;
     if (data instanceof Array) {
         // 判断数组内的每一项是否为对象或数组
-        for(let i = 0; i < data.length; i ++){
+        for (let i = 0; i < data.length; i++) {
             constructProxy(vm, data[i], namespace);
         }
         // 代理数组
@@ -28,22 +30,25 @@ function constructProxy(vm, data, namespace) {
  * @param {*} arr 数据数组
  * @param {*} namespace 命名空间
  */
-function proxyArr(vm, arr, namespace){
+function proxyArr(vm, arr, namespace) {
     let obj = {
         elmType: 'Array',
-        toString(){
+        toString() {
             let str = '';
             for (let i = 0; i < arr.length; i++) {
                 str += arr[i] + ', ';
             }
             return str.substring(0, str.length - 2);
         },
-        push() {},
-        pop() {},
-        shift() {},
-        unshift() {}
+        push() { },
+        pop() { },
+        shift() { },
+        unshift() { }
     }
     defArrayFunc.call(vm, obj, 'push', namespace, vm);
+    defArrayFunc.call(vm, obj, 'pop', namespace, vm);
+    defArrayFunc.call(vm, obj, 'shift', namespace, vm);
+    defArrayFunc.call(vm, obj, 'unshift', namespace, vm);
 
     arr.__proto__ = obj;
     return arr;
@@ -62,10 +67,12 @@ function defArrayFunc(obj, type, namespace, vm) {
     Object.defineProperty(obj, type, {
         enumerable: true,
         configurable: true,
-        value(...args){
+        value(...args) {
             let typeFunc = arrayProto[type];
             let resp = typeFunc.apply(this, args);
-            console.log(namespace);
+            // 更新数据重新渲染界面
+            renderData(vm, getNameSpace(namespace, ''))
+
             return resp;
         }
     })
@@ -86,8 +93,9 @@ function constructObjProxy(vm, objData, namespace) {
                 return objData[key];
             },
             set(value) {
-                console.log(getNameSpace(namespace, key));
                 objData[key] = value;
+                // 更新数据重新渲染界面
+                renderData(vm, getNameSpace(namespace, key))
             }
         });
         Object.defineProperty(vm, key, {
@@ -96,8 +104,9 @@ function constructObjProxy(vm, objData, namespace) {
                 return objData[key];
             },
             set(value) {
-                console.log(getNameSpace(namespace, key));
                 objData[key] = value;
+                // 更新数据重新渲染界面
+                renderData(vm, getNameSpace(namespace, key))
             }
         });
         if (objData[key] instanceof Object) {
