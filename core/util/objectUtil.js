@@ -4,7 +4,7 @@
  * @param {*} name 插值名称
  */
 export function getValue(data, name) {
-    if (!data) return data;
+    if (!data) return;
     let nameArr = name.split('.');
     let value = data;
     for (let i = 0; i < nameArr.length; i++) {
@@ -15,4 +15,26 @@ export function getValue(data, name) {
         };
     };
     return value;
+}
+
+/**
+ * 
+ * @param {*} data 数据状态
+ * @param {*} name 插值名称
+ * @param {*} value 新值
+ */
+export function setValue(data, name, value) {
+    if(!data) return;
+    let nameArr = name.split('.');
+    let temp = data;
+    for (let i = 0; i < nameArr.length - 1; i++) {
+        if (temp[nameArr[i]]) {
+            temp = temp[nameArr[i]];
+        } else {
+            return;
+        };
+    };
+    if(temp[nameArr[nameArr.length - 1]] != null){
+        temp[nameArr[nameArr.length - 1]] = value;
+    }
 }

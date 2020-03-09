@@ -11,6 +11,12 @@
         <span>{{content}}</span>
         <br>
         <input type="text" v-model='obj.x'>{{obj.x}}
+        <ul>
+            <li v-for='(key) in list'>
+                姓名：{{key.name}}
+                年龄：{{key.age}}
+            </li>
+        </ul>
     </div>
 
     <script type='module'>
@@ -28,7 +34,11 @@
                     x: 1
                 },
                 arr: [{arr1: '123'}, {arr2: '456'}],
-                content: '渲染内容'
+                content: '渲染内容',
+                list: [
+                    {name: 'chenjianhui', age: 18},
+                    {name: 'null', age: 20}
+                ]
             }
         });
 

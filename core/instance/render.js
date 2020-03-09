@@ -54,6 +54,19 @@ function renderNode(vm, vnode) {
             // 更新节点内容
             vnode.elm.nodeValue = text;
         };
+
+    } else if (vnode.nodeType == 1 && vnode.nodeName == 'INPUT') {
+        let templates = vnode2Template.get(vnode);
+        if (templates) {
+            for (let i = 0; i < templates.length; i++) {
+                let templateValue = getTemplateValue([vm._data, vnode.env], templates[i]);
+                if(templateValue){
+                    // 替换input元素的值
+                    vnode.elm.value = templateValue;
+                }
+            }
+        }
+
     } else {
         // 递归子节点是否有文本节点
         for (let i = 0; i < vnode.children.length; i++) {
@@ -70,10 +83,15 @@ function renderNode(vm, vnode) {
 function prepareRender(vm, vnode) {
     if (vnode == null) return;
     // 判断是否为文本节点类型
-    if (vnode.nodeType == 3) {
+    if (vnode.nodeType === 3) {
         // 解析模板字符串
         analysisTemplateString(vnode);
     };
+
+    if (vnode.nodeType === 1) {
+        // 解析标签属性
+        analysisAttr(vm, vnode);
+    }
 
     for (let i = 0; i < vnode.children.length; i++) {
         prepareRender(vm, vnode.children[i]);
@@ -92,6 +110,19 @@ function analysisTemplateString(vnode) {
         setTemplate2Vnode(strList[i], vnode);
         setVnode2Template(strList[i], vnode);
     };
+}
+
+/**
+ * 解析标签中的属性
+ * @param {*} vm 
+ * @param {*} vnode 
+ */
+function analysisAttr(vm, vnode) {
+    let attrNames = vnode.elm.getAttributeNames();
+    if (attrNames.indexOf('v-model') > -1) {
+        setTemplate2Vnode(vnode.elm.getAttribute('v-model'), vnode);
+        setVnode2Template(vnode.elm.getAttribute('v-model'), vnode);
+    }
 }
 
 /**

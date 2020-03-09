@@ -1,5 +1,6 @@
 import VNode from "../vdom/vnode.js";
 import prepareRender from './render.js'
+import { vmodel } from "./grammer/vmodel.js";
 
 /**
  * 添加挂载属性
@@ -16,7 +17,7 @@ export function initMount(Due) {
 /**
  * 生成虚拟DOM树
  * @param {*} vm 实例
- * @param {*} elm 根节点
+ * @param {*} elm 元素
  */
 function mount(vm, elm) {
     // 节点挂载
@@ -28,10 +29,11 @@ function mount(vm, elm) {
 /**
  * 生成一个虚拟D节点
  * @param {*} vm 实例
- * @param {*} elm 节点
+ * @param {*} elm 元素
  * @param {*} parent 父级节点
  */
 function constructVNode(vm, elm, parent) {
+    analysisAttr(vm, elm, parent); // 分析元素属性是否有指令
     let vnode = null,
         children = [], // 子节点
         nodeName = elm.nodeName, // 节点名称
@@ -60,13 +62,31 @@ function constructVNode(vm, elm, parent) {
 
 /**
  * 判断是否为文本节点
- * @param {*} elm 
+ * @param {*} elm 元素
  */
 function getNodeText(elm) {
     if (elm.nodeType === 3) {
         return elm.nodeValue;
     } else {
         return '';
+    }
+}
+
+/**
+ * 分析标签元素是否有指令
+ * @param {*} vm 实例
+ * @param {*} elm 元素
+ * @param {*} parent 父级元素
+ */
+function analysisAttr(vm, elm, parent) {
+    // 判断是否为标签节点
+    if(elm.nodeType == 1){
+        // 获取标签内的属性
+        let attrNames = elm.getAttributeNames();
+        // 判断是否有v-model属性
+        if(attrNames.indexOf('v-model') > -1){
+            return vmodel(vm, elm, elm.getAttribute('v-model'));
+        }
     }
 }
 
