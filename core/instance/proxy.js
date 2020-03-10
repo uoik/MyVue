@@ -1,5 +1,6 @@
 import { renderData } from './render.js';
 import { rebuild } from './mount.js';
+import { getValue } from '../util/objectUtil.js';
 
 /**
  * 构建代理
@@ -109,7 +110,14 @@ function constructObjProxy(vm, objData, namespace) {
             set(value) {
                 objData[key] = value;
                 // 更新数据重新渲染界面
-                renderData(vm, getNameSpace(namespace, key))
+                let val = getValue(vm._data, getNameSpace(namespace, key))
+                // 判断是否为数组
+                if (val instanceof Array) {
+                    // 重新建立映射集合
+                    rebuild(vm, getNameSpace(namespace, key));
+                }
+                renderData(vm, getNameSpace(namespace, key));
+
             }
         });
         if (objData[key] instanceof Object) {

@@ -3,6 +3,9 @@ import { renderMixin } from './render.js';
 
 function Due(options) {
     this._init(options);
+    if(options.created != null) {
+        options.created.call(this);
+    }
     this._render();
 }
 

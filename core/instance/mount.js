@@ -121,6 +121,11 @@ function analysisAttr(vm, elm, parent) {
     }
 }
 
+/**
+ * 重新建立映射集合
+ * @param {*} vm 
+ * @param {*} template 
+ */
 export function rebuild(vm, template) {
     let virtualNode = getVNodeByTemplate(template);
     if (virtualNode) {

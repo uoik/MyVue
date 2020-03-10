@@ -17,12 +17,22 @@ function initMixin(Due) {
             vm._data = constructProxy(vm, options.data, '');
         }
 
+        // 初始化created
+        if(options && options.created){
+            vm._created = options.created;
+        }
+
         // 初始化methods
         if(options && options.methods) {
             vm._methods = options.methods;
             for (const key in options.methods) {
                 vm[key] = options.methods[key];
             }
+        }
+
+        // 初始化computed
+        if(options && options.computed){
+            vm._computed = options.computed;
         }
 
         // 初始化el并挂载
