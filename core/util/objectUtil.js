@@ -83,3 +83,14 @@ function cloneObject(obj) {
     return result;
 }
 
+/**
+ * 拼接环境变量
+ * @param {*} vm 
+ * @param {*} vnode 
+ */
+export function getEnvAttr(vm, vnode) {
+    let result = mergeAttr(vm._data, vnode.env);
+    result = mergeAttr(result, vm._computed);
+    return result;
+}
+

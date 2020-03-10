@@ -17,6 +17,14 @@ function initMixin(Due) {
             vm._data = constructProxy(vm, options.data, '');
         }
 
+        // 初始化methods
+        if(options && options.methods) {
+            vm._methods = options.methods;
+            for (const key in options.methods) {
+                vm[key] = options.methods[key];
+            }
+        }
+
         // 初始化el并挂载
         if(options && options.el){
             const rootDom = document.getElementById(options.el);

@@ -3,6 +3,8 @@ import prepareRender, { getVNodeByTemplate, clearMap, renderNode } from './rende
 import { vmodel } from "./grammer/vmodel.js";
 import { vfor } from './grammer/vfor.js';
 import { mergeAttr } from '../util/objectUtil.js';
+import { vbind } from "./grammer/vbind.js";
+import { von } from './grammer/von.js';
 
 /**
  * 添加挂载属性
@@ -29,7 +31,7 @@ function mount(vm, elm) {
 }
 
 /**
- * 生成一个虚拟D节点
+ * 生成一个虚拟DOM节点
  * @param {*} vm 实例
  * @param {*} elm 元素
  * @param {*} parent 父级节点
@@ -52,6 +54,9 @@ function constructVNode(vm, elm, parent) {
             vnode.env = mergeAttr(vnode.env, parent ? parent.env : {});
         }
     }
+
+    vbind(vm, vnode); // 检查v-bind指令
+    von(vm, vnode); // 检查v-on指令
 
     // 得到节点类型
     let nodeType = vnode.nodeType;

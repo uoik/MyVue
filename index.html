@@ -4,16 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        .red{
+            color: red;
+            font-size: 20px;
+        }
+        .blue{
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
-        <!-- 这是一段文本节点{{name}}{{age}}
+        这是一段文本节点{{name}}{{age}}
         <span>{{content}}</span>
         <br>
-        <input type="text" v-model='obj.x'>{{obj.x}} -->
+        <input v-on:keydown='test' type="text" v-model='obj.x'>{{obj.x}}
+        <input @keydown='test' type="text" v-model='obj.x'>{{obj.x}}
         <ul>
             <li v-for='(key) in list'>姓名：{{key.name}}年龄：{{key.age}}</li>
         </ul>
+        <img v-bind:src="imgSrc" alt="图片">
+        <span v-bind:class='test'>测试文本</span>
+        <span v-bind:class='{red, blue: obj.x > 1}'>测试文本</span>
+        <span class='red blue'>123456</span>
     </div>
 
     <script type='module'>
@@ -28,14 +42,27 @@
                     y: {
                         a: '12'
                     },
-                    x: 1
+                    x: 2
                 },
                 arr: [{arr1: '123'}, {arr2: '456'}],
                 content: '渲染内容',
                 list: [
                     {name: 'chenjianhui', age: 18},
                     {name: 'null', age: 20}
-                ]
+                ],
+                imgSrc: 'a.png',
+                test: 'red',
+                newOjb: {
+                    name: 1
+                }
+            },
+            methods: {
+                test(){
+                    console.log('hello', this);
+                }
+            },
+            created: function () {
+                console.log('创建完了');
             }
         });
 
