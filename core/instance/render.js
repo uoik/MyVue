@@ -35,7 +35,7 @@ export function renderData(vm, data) {
  * @param {*} vm 实例
  * @param {*} vnode 节点
  */
-function renderNode(vm, vnode) {
+export function renderNode(vm, vnode) {
     // 查询文本节点
     if (vnode.nodeType === 3) {
         // 查询出该节点下的所有模板
@@ -60,7 +60,7 @@ function renderNode(vm, vnode) {
         if (templates) {
             for (let i = 0; i < templates.length; i++) {
                 let templateValue = getTemplateValue([vm._data, vnode.env], templates[i]);
-                if(templateValue){
+                if (templateValue) {
                     // 替换input元素的值
                     vnode.elm.value = templateValue;
                 }
@@ -87,12 +87,16 @@ function prepareRender(vm, vnode) {
         // 解析模板字符串
         analysisTemplateString(vnode);
     };
-
+    // 判断是否为标签类型
     if (vnode.nodeType === 1) {
         // 解析标签属性
         analysisAttr(vm, vnode);
     }
-
+    // 判断是否为虚拟DOM
+    if (vnode.nodeType === 0) {
+        setTemplate2Vnode("{{" + vnode.data + "}}", vnode);
+        setVnode2Template("{{" + vnode.data + "}}", vnode);
+    }
     for (let i = 0; i < vnode.children.length; i++) {
         prepareRender(vm, vnode.children[i]);
     };
@@ -154,6 +158,14 @@ function setVnode2Template(template, vnode) {
 }
 
 /**
+ * 清空节点模板映射集合
+ */
+export function clearMap() {
+    template2Vnode.clear();
+    vnode2Template.clear();
+}
+
+/**
  * 去除插值表达式
  */
 function getTemplateName(text) {
@@ -173,6 +185,14 @@ function getTemplateValue(dataArr, templateName) {
         };
     };
     return null;
+}
+
+/**
+ * 根据模板返回对应的虚拟节点
+ * @param {d} template 
+ */
+export function getVNodeByTemplate(template) {
+    return template2Vnode.get(template);
 }
 
 export default prepareRender;

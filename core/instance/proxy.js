@@ -1,4 +1,5 @@
 import { renderData } from './render.js';
+import { rebuild } from './mount.js';
 
 /**
  * 构建代理
@@ -70,6 +71,8 @@ function defArrayFunc(obj, type, namespace, vm) {
         value(...args) {
             let typeFunc = arrayProto[type];
             let resp = typeFunc.apply(this, args);
+            // 
+            rebuild(vm, getNameSpace(namespace, ''));
             // 更新数据重新渲染界面
             renderData(vm, getNameSpace(namespace, ''))
 
